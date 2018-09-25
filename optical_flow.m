@@ -8,24 +8,24 @@ I2 = rgb2gray(I2);
 
 
 % ventana n = 1
-%optical_flow_lk(I1,I2,1);
+optical_flow_lk(I1,I2,1);
 
 
 % ventana n = 3
-%optical_flow_lk(I1,I2,3);
+optical_flow_lk(I1,I2,3);
 
 % ventana n = 9
-%optical_flow_lk(I1,I2,9);
+optical_flow_lk(I1,I2,9);
 
 % ventana n = 21
-%optical_flow_lk(I1,I2, 21);
+optical_flow_lk(I1,I2, 21);
 
 
 
 function x = optical_flow_lk(I1,I2,n)
     %Mascaras
-    dx = 1/4 * fspecial('sobel');
-    dy = 1/4 * fspecial('prewitt');
+    dx = 1/4 * [-1 1; -1 1];
+    dy = 1/4 * [-1 -1; 1 1];
 
     tau = 1;
 
@@ -51,8 +51,8 @@ function x = optical_flow_lk(I1,I2,n)
     for i = n+1:size(Idx,1)-n
        for j = n+1:size(Idx,2)-n
           Ix = Idx(i-n:i+n, j-n:j+n);
-          Iy = Idy(i-n:i+n, j-w:j+n);
-          It = Idt(i-n:i+n, j-w:j+n);
+          Iy = Idy(i-n:i+n, j-n:j+n);
+          It = Idt(i-n:i+n, j-n:j+n);
 
           Ix = Ix(:);
           Iy = Iy(:);
@@ -68,11 +68,12 @@ function x = optical_flow_lk(I1,I2,n)
     
     
     % get coordinate for u and v in the original frame
-    [m, n] = size(I1);
-    [X,Y] = meshgrid(1:n, 1:m);
-    X_deci = X(1:20:end, 1:20:end);
-    Y_deci = Y(1:20:end, 1:20:end);
+    %[m, n] = size(I1);
+    %[X,Y] = meshgrid(1:n, 1:m);
+    %X_deci = X(1:20:end, 1:20:end);
+    %Y_deci = Y(1:20:end, 1:20:end);
     
+    display_plot(vx,vy)
     
     x = 0;
 end
