@@ -66,12 +66,7 @@ function x = optical_flow_lk(I1,I2,n)
        end
     end
     
-    
-    % get coordinate for u and v in the original frame
-    %[m, n] = size(I1);
-    %[X,Y] = meshgrid(1:n, 1:m);
-    %X_deci = X(1:20:end, 1:20:end);
-    %Y_deci = Y(1:20:end, 1:20:end);
+   
     
     display_plot(vx,vy)
     
