@@ -6,43 +6,80 @@ I1 = rgb2gray(I1);
 I2 = rgb2gray(I2);
 
 
-F1 = 1/4 * fspecial('sobel');
 
-F2 = 1/4 * fspecial('prewitt');
-
-
+% ventana n = 1
+%optical_flow_lk(I1,I2,1);
 
 
-C1 = conv2(I1,F1);
-C2 = conv2(I2,F2);
+% ventana n = 3
+%optical_flow_lk(I1,I2,3);
 
-Dt = I1-I2;
+% ventana n = 9
+%optical_flow_lk(I1,I2,9);
 
-I1 = I1(:);
+% ventana n = 21
+%optical_flow_lk(I1,I2, 21);
 
-%D = gradient(I1);
-%Least squares with first derivative equals zero
-function W = getOptimumW(x, t, M)
-    c = 1;
-    %build matrices A and B
-    %iteration for each row
-    for m = M : 2*M
-        %iterates each equation i
-        B(c,1) = sum(t .* x .^ (c - 1));
-        w = 1;
-        %1.m = M
-        %2.m = M + 1
-        %iteration for each column
-        for k = m - M:m
-            %1.1 k = M-M=0
-            %1.2 k = 1
-            %1.3 k = 2 ....
-            %2.1
-            A(c, w) = sum(x .^ k);
-            w = w + 1;
-        end
-        c = c + 1;
+
+
+function x = optical_flow_lk(I1,I2,n)
+    %Mascaras
+    dx = 1/4 * fspecial('sobel');
+    dy = 1/4 * fspecial('prewitt');
+
+    tau = 1;
+
+    c1 = 0.25 * [1 1; 1 1];
+    c2 =  -0.25 * [1 1; 1 1];
+
+
+    It = conv2(I1,c1);
+    It1 = conv2(I2,c2);
+
+
+    %Derivadas Parciales
+    Idx = conv2(I1,dx); %parcial en x
+    Idy = conv2(I1,dy); %parical en y
+    Idt = It + It1;     %parial en t
+
+
+
+    vx = zeros(size(I1));
+    vy = zeros(size(I1));
+
+    % within window ww * ww
+    for i = n+1:size(Idx,1)-n
+       for j = n+1:size(Idx,2)-n
+          Ix = Idx(i-n:i+n, j-n:j+n);
+          Iy = Idy(i-n:i+n, j-w:j+n);
+          It = Idt(i-n:i+n, j-w:j+n);
+
+          Ix = Ix(:);
+          Iy = Iy(:);
+          b = -It(:); %obtiene b
+
+          A = [Ix Iy]; % matriz A
+          nu = pinv(A)*b; % velocidad
+
+          vx(i,j)=nu(1);
+          vy(i,j)=nu(2);
+       end
     end
-    %solve the linear system, si hay singularidades puede reventar
-    W = linsolve(A,B);
+    
+    
+    % get coordinate for u and v in the original frame
+    [m, n] = size(I1);
+    [X,Y] = meshgrid(1:n, 1:m);
+    X_deci = X(1:20:end, 1:20:end);
+    Y_deci = Y(1:20:end, 1:20:end);
+    
+    
+    x = 0;
+end
+
+%Display the OF as a plot of vectors
+function display_plot(Vx,Vy)
+    figure
+    axis equal
+    quiver(impyramid(impyramid(medfilt2(flipud(Vx), [5 5]), 'reduce'), 'reduce'), -impyramid(impyramid(medfilt2(flipud(Vy), [5 5]), 'reduce'), 'reduce'));
 end
