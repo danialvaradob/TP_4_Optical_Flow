@@ -1,0 +1,3 @@
+path = 'input';
+I1 = imread(strcat(path,'cuadro_1','.jpg')); 
+I2 = imread(strcat(path,'cuadro_1','.jpg')); 
