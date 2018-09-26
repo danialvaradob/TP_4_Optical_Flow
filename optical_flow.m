@@ -47,7 +47,7 @@ function x = optical_flow_lk(I1,I2,n)
     vx = zeros(size(I1));
     vy = zeros(size(I1));
 
-    % within window ww * ww
+    % ventana n * n
     for i = n+1:size(Idx,1)-n
        for j = n+1:size(Idx,2)-n
           Ix = Idx(i-n:i+n, j-n:j+n);
